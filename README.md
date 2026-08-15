@@ -1,5 +1,4 @@
 # Cell Culture Laboratory Management System
-# Cell Culture Laboratory Management System
 
 ## Project Overview
 This project implements a relational database for managing a cell culture laboratory. It tracks cell lines, culture vessels, media, incubators, researchers, experiments, passages, observations, contamination tests, and cryopreserved stocks. 
