@@ -1,0 +1,44 @@
+# Fundamentals of Databases - Biotechnology Database Project
+**Title:** Cell Culture Laboratory Management System
+**Student Name:** amrhatem abd elkader
+**Student ID:** 221001165
+**University:** Nile University
+
+## 1. Problem Statement & Scope
+This project designs a relational database for managing a cell culture laboratory. The scope encompasses tracking researchers, cell lines (compliant with ATCC standards), media formulations, equipment (incubators, vessels), and the lifecycle of cell cultures (experiments, passages, observations, contamination tests, and cryopreservation).
+
+## 2. Assumptions & Business Rules
+* A cell line can be used in multiple passages, but a passage is tied to exactly one cell line.
+* Passages act as the central associative entity linking experiments, vessels, media, incubators, and researchers.
+* All percentage values (serum, confluency) must be strictly positive and logically bound (e.g., <= 100).
+* Deleting a researcher or experiment cascades to their respective passages to maintain referential integrity.
+
+## 3. Entities & Attributes
+* **Researchers:** researcher_id (PK), name, email, role, department
+* **Cell_Lines:** cell_line_id (PK), name, organism, tissue_origin, cell_type, atcc_number, bsl_level
+* **Media:** media_id (PK), name, manufacturer, catalog_number, serum_percentage, storage_temp_c
+* **Incubators:** incubator_id (PK), name, location, temp_target_c, co2_target_percent, humidity_percent
+* **Culture_Vessels:** vessel_id (PK), vessel_type, surface_area_cm2, working_volume_ml, brand
+* **Experiments:** experiment_id (PK), researcher_id (FK), title, start_date, status
+* **Passages:** passage_id (PK), cell_line_id (FK), experiment_id (FK), vessel_id (FK), media_id (FK), incubator_id (FK), researcher_id (FK), passage_number, seeding_density_cells_cm2, passage_date
+* **Observations:** observation_id (PK), passage_id (FK), researcher_id (FK), observation_date, confluency_percentage, morphology_notes
+* **Contamination_Tests:** test_id (PK), passage_id (FK), tested_by_researcher_id (FK), test_type, test_date, result
+* **Cryopreserved_Stocks:** stock_id (PK), passage_id (FK), vial_label, freezer_location, passage_number_at_freeze, vial_count, freeze_date
+
+## 4. Normalization (Up to 3NF)
+The database is normalized to Third Normal Form (3NF). 
+* **1NF:** All attributes contain atomic values (e.g., location strings are singular, no repeating groups).
+* **2NF:** Achieved by using surrogate auto-incrementing Primary Keys (`id` fields). All non-key attributes are fully functionally dependent on the primary key.
+* **3NF:** No transitive dependencies exist. For instance, the `Media` manufacturer details depend solely on the `media_id`, not on the `Passages` that utilize the media.
+
+## 5. Implementation Details
+The database was implemented using MySQL 8.0+. Constraints such as `CHECK` (ensuring positive values for surface area and volumes) and `ENUM` (for standardizing test results and experiment statuses) were heavily utilized to enforce data integrity.
+
+## 6. Views, Procedures, and Triggers
+* **vw_active_passages:** Simplifies the retrieval of active culture status by joining 5 normalized tables.
+* **vw_cryo_inventory:** Provides a quick-look inventory for the biobank manager.
+* **Checkout_Cryo_Vials (Stored Procedure):** Enforces a critical business rule by ensuring lab staff cannot withdraw more frozen vials than are currently logged in the system.
+
+## 7. Conclusion & References
+This database successfully models the operational flow of a modern biotechnology lab. 
+* References: Dataset standards loosely based on ATCC catalog formats and Cellosaurus conventions.
